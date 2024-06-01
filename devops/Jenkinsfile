@@ -55,17 +55,17 @@ node(label: 'principal') {
             }
             node(label: 'docker') {
                 // Verificamos si el repositorio ya existe localmente
-                def repoExists = sh(script: 'test -d AQUA-SAN-ISIDRO', returnStatus: true) == 0
+                def repoExists = sh(script: 'test -d aqua-san-isidro', returnStatus: true) == 0
                 if (repoExists) {
                     // Si el repositorio existe, hacemos un pull
-                    sh(script: 'cd AQUA-SAN-ISIDRO && git pull')
+                    sh(script: 'cd aqua-san-isidro && git pull')
                 } else {
                     // Si no existe, clonamos el repositorio
-                    sh(script: 'git clone --single-branch --branch development https://github.com/MiltonLiquinchana/flower-app-front.git')
+                    sh(script: 'git clone --single-branch --branch development https://github.com/MiltonLiquinchana/aqua-san-isidro.git')
                 }
                 // Instalamos las dependencias y construimos el proyecto
-                sh(script: 'npm --prefix AQUA-SAN-ISIDRO install')
-                sh(script: 'npm --prefix AQUA-SAN-ISIDRO run build')
+                sh(script: 'npm --prefix aqua-san-isidro install')
+                sh(script: 'npm --prefix aqua-san-isidro run build')
             }
         }
         stage("Build Docker Image") {
@@ -79,7 +79,7 @@ node(label: 'principal') {
             node(label: 'docker') {
                 // Usamos el registro de Docker para construir y empujar la imagen Docker
                 docker.withRegistry('https://index.docker.io/v1/', 'dockerhub_integration_credentials') {
-                    def customImage = docker.build('miltonlq/aqua-sistem:latest', '--no-cache --build-arg distfilepath=AQUA-SAN-ISIDRO/dist/ -f AQUA-SAN-ISIDRO/devops/desarrollo/docker/Dockerfile ./')
+                    def customImage = docker.build('miltonlq/aqua-sistem:latest', '--no-cache --build-arg distfilepath=aqua-san-isidro/dist/ -f aqua-san-isidro/devops/desarrollo/docker/Dockerfile ./')
                     customImage.push()
                 }
             }
