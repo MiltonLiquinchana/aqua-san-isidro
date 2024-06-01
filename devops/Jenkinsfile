@@ -1,0 +1,108 @@
+// Definimos una función que notifica mediante Slack a los desarrolladores involucrados en el proyecto
+def sendSlackNotifcation(){
+    def description_error = ''
+    def color = 'good'
+    def status = '*SUCCESS*'
+    def stageNameError = ''
+    def branchName = env.BRANCH_NAME
+
+    // Si el resultado de la construcción es 'FAILURE', ajustamos los mensajes y el color
+    if (currentBuild.result == 'FAILURE') {
+        description_error = "*${CI_ERROR}*"
+        color = 'danger'
+        status = '*FAILURE*'
+    }
+
+    // Construimos el mensaje de resumen de la construcción
+    buildSummary = "Job: ${env.JOB_NAME}\nStatus: ${status}\nError description: ${description_error}\nBuild Report: ${env.BUILD_URL}console\nUser Name: ${branchName}"
+    // Enviamos el mensaje a Slack
+    slackSend(color: color, message: "${buildSummary}", channel: 'flower-app-front')
+}
+
+node(label: 'principal') {
+    try {
+        stage('Checkout') {
+            // Guardamos el nombre de la etapa en caso de error
+            stageNameError = "${STAGE_NAME}"
+            branchName = env.BRANCH_NAME
+            // Realizamos el checkout del código fuente
+            checkout scm
+        }
+        stage('SonarQube Analysis') {
+            // Guardamos el nombre de la etapa en caso de error
+            stageNameError = "${STAGE_NAME}"
+            // Definimos una variable para obtener la ruta de SonarScanner instalado en tools
+            def scannerHome = tool 'sonarscaner'
+            // Configuramos el entorno de SonarQube y ejecutamos el análisis
+            withSonarQubeEnv('sonarqube') {
+                sh "${scannerHome}/bin/sonar-scanner -Dproject.settings=flower-app/sonar-project.properties"
+            }
+        }
+        stage("Quality Gate") {
+            // Guardamos el nombre de la etapa en caso de error
+            stageNameError = "${STAGE_NAME}"
+            // Esperamos a que el Quality Gate de SonarQube sea completado, con un timeout de 5 minutos
+            timeout(time: 5, unit: 'MINUTES') {
+                waitForQualityGate(abortPipeline: true, webhookSecretId: 'sonarqube-webhook-integration-token')
+            }
+        }
+        stage("Building React Flower App Front Project") {
+            // Guardamos el nombre de la etapa en caso de error
+            stageNameError = "${STAGE_NAME}"
+            // Solo construimos si la rama es 'development'
+            if (branchName != 'development') {
+                return
+            }
+            node(label: 'docker') {
+                // Verificamos si el repositorio ya existe localmente
+                def repoExists = sh(script: 'test -d AQUA-SAN-ISIDRO', returnStatus: true) == 0
+                if (repoExists) {
+                    // Si el repositorio existe, hacemos un pull
+                    sh(script: 'cd AQUA-SAN-ISIDRO && git pull')
+                } else {
+                    // Si no existe, clonamos el repositorio
+                    sh(script: 'git clone --single-branch --branch development https://github.com/MiltonLiquinchana/flower-app-front.git')
+                }
+                // Instalamos las dependencias y construimos el proyecto
+                sh(script: 'npm --prefix AQUA-SAN-ISIDRO install')
+                sh(script: 'npm --prefix AQUA-SAN-ISIDRO run build')
+            }
+        }
+        stage("Build Docker Image") {
+            // Guardamos el nombre de la etapa en caso de error
+            stageNameError = "${STAGE_NAME}"
+            // Solo construimos si la rama es 'development'
+            if (branchName != 'development') {
+                echo(message: 'Skipping deployment stage as branch is not development')
+                return
+            }
+            node(label: 'docker') {
+                // Usamos el registro de Docker para construir y empujar la imagen Docker
+                docker.withRegistry('https://index.docker.io/v1/', 'dockerhub_integration_credentials') {
+                    def customImage = docker.build('miltonlq/aqua-sistem:latest', '--no-cache --build-arg distfilepath=AQUA-SAN-ISIDRO/dist/ -f AQUA-SAN-ISIDRO/devops/desarrollo/docker/Dockerfile ./')
+                    customImage.push()
+                }
+            }
+        }
+        stage("Deploy Flower App Front"){
+            // Guardamos el nombre de la etapa en caso de error
+            stageNameError = "${STAGE_NAME}"
+            // Solo construimos si la rama es 'development'
+            if (branchName != 'development') {
+                return
+            }
+            withCredentials(bindings: [
+                            string(credentialsId: 'kubernetes-jenkins-account-token', variable: 'api_token')
+                            ]) {
+                sh(script: 'kubectl --token $api_token --server https://192.168.49.2:8443 --insecure-skip-tls-verify=true apply -f /devops/desarrollo/kubernetes')
+            }
+        }
+    } catch (Exception e) {
+        // Si ocurre una excepción, marcamos el resultado de la construcción como 'FAILURE' y guardamos el mensaje de error
+        currentBuild.result = 'FAILURE'
+        CI_ERROR = "Error en el paso ${stageNameError}: ${e.message}"
+    } finally {
+        // Finalmente, enviamos la notificación de Slack
+        sendSlackNotifcation()
+    }
+}

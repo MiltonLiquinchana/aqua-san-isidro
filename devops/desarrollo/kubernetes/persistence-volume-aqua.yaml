@@ -1,0 +1,21 @@
+# Un PersistentVolume en Kubernetes es como un disco duro, proporciona almacenamiento persistente que puede ser
+# utilizado por múltiples aplicaciones.
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nginx-volume # Nombre del PersistentVolume
+  labels:
+    type: local # Etiqueta que indica el tipo de almacenamiento utilizado
+    app: nginx # Etiqueta que identifica la aplicación asociada
+spec:
+  storageClassName: manual
+  # Capacidad de almacenamiento de 5 GB
+  capacity:
+    storage: 5Gi
+  # Modo de acceso que permite lectura y escritura a múltiples pods.
+  accessModes:
+    - ReadWriteMany
+  # Indicamos que este PersistentVolume se crea manualmente y especificamos el punto de montaje.
+  hostPath:
+    # Este es el punto de montaje en el cual se creará el espacio de almacenamiento.
+    path: "/mnt/data/"

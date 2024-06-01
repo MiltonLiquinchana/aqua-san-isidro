@@ -1,0 +1,19 @@
+# Un Service en Kubernetes permite exponer una aplicación dentro del clúster para que otras
+# aplicaciones o usuarios puedan acceder a ella.
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service # Nombre del servicio
+  labels:
+    app: nginx # Etiqueta que identifica la aplicación
+spec:
+  # Selector que indica qué pods se van a asociar a este servicio.
+  selector:
+    app: nginx
+  # Puertos que el servicio va a exponer.
+  ports:
+    - name: nginx # Nombre del puerto
+      port: 80 # Puerto interno del servicio
+      nodePort: 30002 # Puerto accesible externamente por los nodos del clúster
+  # Tipo de servicio, en este caso NodePort para acceder al servicio a través de un puerto específico en los nodos del clúster.
+  type: NodePort

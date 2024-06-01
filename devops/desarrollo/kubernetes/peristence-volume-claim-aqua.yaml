@@ -1,0 +1,17 @@
+# Un PersistentVolumeClaim (PVC) es una solicitud de almacenamiento persistente que una aplicación
+# hace al clúster Kubernetes para obtener acceso al PersistentVolume previamente creado.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nginx-claim # Nombre del PersistentVolumeClaim
+  labels:
+    app: nginx # Etiqueta que identifica la aplicación asociada
+spec:
+  storageClassName: manual
+  # Especificamos que necesitamos acceso de lectura y escritura al PersistentVolume.
+  accessModes:
+    - ReadWriteMany
+  # Indicamos que esta solicitud necesita 2 GB de almacenamiento.
+  resources:
+    requests:
+      storage: 2Gi

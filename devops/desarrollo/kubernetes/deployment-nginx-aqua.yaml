@@ -1,0 +1,44 @@
+# Un Deployment en Kubernetes administra la creación y actualización de pods para una aplicación.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment # Nombre del Deployment
+  labels:
+    app: nginx # Label que identifica la aplicación
+# En esta sección definimos los detalles de la imagen y los pods que vamos a tener
+spec:
+  # Número de replicas (pods) que se van a crear
+  replicas: 1
+  selector:
+    # Selector que identifica los pods para este Deployment
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      automountServiceAccountToken: false # Desactiva la montura automática de token de cuenta de servicio
+      containers:
+        - name: flower-app
+          # Imagen del contenedor a utilizar
+          image: miltonlq/flowerappfront
+          # Política de extracción de imagen
+          imagePullPolicy: IfNotPresent # Extraer solo si la imagen no está presente localmente
+          # Limites de recursos para el pod
+          resources:
+            limits:
+              cpu: "0.5" # Límite de CPU: 0.5 núcleos
+              memory: "256Mi" # Límite de memoria: 256 megabytes
+          # Puertos expuestos por el contenedor
+          ports:
+            - containerPort: 80 # Puerto en el que el contenedor escucha las solicitudes
+      #     # Montaje de volúmenes
+      #     volumeMounts:
+      #       - mountPath: /usr/share/nginx/html # Ruta de montaje en el contenedor
+      #         name: nginxwb # Nombre del volumen
+      # # Definición de volúmenes
+      # volumes:
+      #   - name: nginxwb # Nombre del volumen persistente
+      #     persistentVolumeClaim:
+      #       claimName: nginx-claim # Nombre del PersistentVolumeClaim asociado

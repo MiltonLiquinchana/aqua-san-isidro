@@ -1,0 +1,10 @@
+version: '3.9'
+services:
+  flower-front:
+    build:
+      context: docker/
+      dockerfile: Dockerfile
+    volumes:
+      - /home/miltonlq/Volumes/ngix/html:/usr/share/nginx/html
+    ports:
+      - 9900:8080
