@@ -33,7 +33,6 @@ node(label: 'principal') {
             stageNameError = "${STAGE_NAME}"
             // Solo construimos si la rama es 'development'
             if (branchName == 'development') {
-                echo(message: 'Skipping deployment stage as branch is development')
                 return
             }
             // Definimos una variable para obtener la ruta de SonarScanner instalado en tools
@@ -48,7 +47,6 @@ node(label: 'principal') {
             stageNameError = "${STAGE_NAME}"
             // Solo construimos si la rama es 'development'
             if (branchName == 'development') {
-                echo(message: 'Skipping deployment stage as branch is development')
                 return
             }
             // Esperamos a que el Quality Gate de SonarQube sea completado, con un timeout de 5 minutos
@@ -61,7 +59,6 @@ node(label: 'principal') {
             stageNameError = "${STAGE_NAME}"
             // Solo construimos si la rama es 'development'
             if (branchName != 'development') {
-                echo(message: 'Skipping deployment stage as branch is not development')
                 return
             }
             node(label: 'docker') {
@@ -84,7 +81,6 @@ node(label: 'principal') {
             stageNameError = "${STAGE_NAME}"
             // Solo construimos si la rama es 'development'
             if (branchName != 'development') {
-                echo(message: 'Skipping deployment stage as branch is not development')
                 return
             }
             node(label: 'docker') {
