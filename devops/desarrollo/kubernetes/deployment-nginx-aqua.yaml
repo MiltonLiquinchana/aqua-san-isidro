@@ -22,7 +22,7 @@ spec:
       containers:
         - name: flower-app
           # Imagen del contenedor a utilizar
-          image: miltonlq/flowerappfront
+          image: miltonlq/aqua-sistem
           # Política de extracción de imagen
           imagePullPolicy: IfNotPresent # Extraer solo si la imagen no está presente localmente
           # Limites de recursos para el pod
