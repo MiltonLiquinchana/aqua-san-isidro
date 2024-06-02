@@ -31,6 +31,11 @@ node(label: 'principal') {
         stage('SonarQube Analysis') {
             // Guardamos el nombre de la etapa en caso de error
             stageNameError = "${STAGE_NAME}"
+            // Solo construimos si la rama es 'development'
+            if (branchName == 'development') {
+                echo(message: 'Skipping deployment stage as branch is development')
+                return
+            }
             // Definimos una variable para obtener la ruta de SonarScanner instalado en tools
             def scannerHome = tool 'sonarscaner'
             // Configuramos el entorno de SonarQube y ejecutamos el análisis
@@ -41,16 +46,22 @@ node(label: 'principal') {
         stage("Quality Gate") {
             // Guardamos el nombre de la etapa en caso de error
             stageNameError = "${STAGE_NAME}"
+            // Solo construimos si la rama es 'development'
+            if (branchName == 'development') {
+                echo(message: 'Skipping deployment stage as branch is development')
+                return
+            }
             // Esperamos a que el Quality Gate de SonarQube sea completado, con un timeout de 5 minutos
             timeout(time: 5, unit: 'MINUTES') {
                 waitForQualityGate(abortPipeline: true, webhookSecretId: 'sonarqube-webhook-integration-token')
             }
         }
-        stage("Building React Flower App Front Project") {
+        stage("Building Aqua App Front Project") {
             // Guardamos el nombre de la etapa en caso de error
             stageNameError = "${STAGE_NAME}"
             // Solo construimos si la rama es 'development'
             if (branchName != 'development') {
+                echo(message: 'Skipping deployment stage as branch is not development')
                 return
             }
             node(label: 'docker') {
@@ -94,7 +105,7 @@ node(label: 'principal') {
             withCredentials(bindings: [
                             string(credentialsId: 'kubernetes-jenkins-account-token', variable: 'api_token')
                             ]) {
-                sh(script: 'kubectl --token $api_token --server https://192.168.49.2:8443 --insecure-skip-tls-verify=true apply -f /devops/desarrollo/kubernetes')
+                sh(script: 'kubectl --token $api_token --server https://192.168.49.2:8443 --insecure-skip-tls-verify=true apply -f aqua-san-isidro/devops/desarrollo/kubernetes')
             }
         }
     } catch (Exception e) {
