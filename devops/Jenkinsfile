@@ -101,7 +101,7 @@ node(label: 'principal') {
             withCredentials(bindings: [
                             string(credentialsId: 'kubernetes-jenkins-account-token', variable: 'api_token')
                             ]) {
-                sh(script: 'kubectl --token $api_token --server https://192.168.49.2:8443 --insecure-skip-tls-verify=true apply -f aqua-san-isidro/devops/desarrollo/kubernetes')
+                sh(script: 'kubectl --token $api_token --server https://192.168.49.2:8443 --insecure-skip-tls-verify=true apply -f devops/desarrollo/kubernetes')
             }
         }
     } catch (Exception e) {
