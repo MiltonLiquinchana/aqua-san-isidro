@@ -35,7 +35,7 @@ node(label: 'principal') {
             def scannerHome = tool 'sonarscaner'
             // Configuramos el entorno de SonarQube y ejecutamos el análisis
             withSonarQubeEnv('sonarqube') {
-                sh "${scannerHome}/bin/sonar-scanner -Dproject.settings=flower-app/sonar-project.properties"
+                sh "${scannerHome}/bin/sonar-scanner -Dproject.settings=sonar-project.properties"
             }
         }
         stage("Quality Gate") {
