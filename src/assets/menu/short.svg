@@ -1,13 +1,13 @@
-<svg width="1.000000" height="19.000000" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg width="19.000000" height="19.000000" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 	<desc>
 			Created with Pixso.
 	</desc>
 	<defs>
-		<clipPath id="clip2_42">
+		<clipPath id="clip35_10">
 			<rect id="large" width="19.000000" height="19.000000" transform="matrix(-1 0 0 1 19 0)" fill="white" fill-opacity="0"/>
 		</clipPath>
 	</defs>
-	<g clip-path="url(#clip2_42)">
+	<g clip-path="url(#clip35_10)">
 		<path id="Vector" d="M14.25 14.25L4.75 9.5L14.25 4.75" stroke="#FAF6F5" stroke-opacity="1.000000" stroke-width="2.000000" stroke-linejoin="round" stroke-linecap="round"/>
 	</g>
 </svg>
