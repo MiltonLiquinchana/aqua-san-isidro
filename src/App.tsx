@@ -4,7 +4,7 @@ import Menu from "./components/Menu";
 function App() {
   return (
     <>
-      <div className="menu">
+      <div className="menu menu-small">
         <Menu />
       </div>
       <div className="contenido">{<Outlet />}</div>
