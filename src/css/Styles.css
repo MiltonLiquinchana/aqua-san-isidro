@@ -2,7 +2,6 @@
 .navbar {
   padding: 0px;
   background: transparent !important;
-  border: 1px red solid;
 }
 .navbar .container {
   padding: 0px;
@@ -148,7 +147,7 @@
 }
 .menu-small .navbar .container .navbar-brand .header-menu-text {
   width: 0px;
-  display: none;
+  visibility: collapse;
 }
 .menu-small .navbar .container .navbar-brand .header-menu-expand {
   width: 100%;
@@ -177,6 +176,22 @@
   display: none;
 }
 
+@keyframes shrinkAnimation {
+  from {
+    width: 300px;
+  }
+  to {
+    width: 150px;
+  }
+}
+@keyframes expandAnimation {
+  from {
+    width: 150px;
+  }
+  to {
+    width: 300px;
+  }
+}
 html,
 body {
   background: #FAF1FC;
@@ -196,10 +211,11 @@ body #root .menu {
   width: 300px;
   background-color: #202B46;
   padding: 24px;
+  animation: expandAnimation 0.2s ease-out;
 }
 html #root .menu-small,
 body #root .menu-small {
-  width: 150px;
+  animation: shrinkAnimation 0.5s ease-in-out forwards;
 }
 html #root .contenido,
 body #root .contenido {

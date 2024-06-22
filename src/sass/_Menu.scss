@@ -1,7 +1,6 @@
 .navbar {
     padding: 0px;
     background: transparent !important;
-    border: 1px red solid;
 
     .container {
         padding: 0px;
@@ -187,8 +186,10 @@
                 flex-direction: column;
 
                 .header-menu-text {
+
                     width: 0px;
-                    display: none;
+                    visibility: collapse;
+                    // display: none;
                 }
 
                 .header-menu-expand {
@@ -219,10 +220,12 @@
 
                 .expanded {
                     height: auto;
-                    .expanded-link{
+
+                    .expanded-link {
                         border-radius: 10px;
                     }
-                    .expanded-list{
+
+                    .expanded-list {
                         display: none;
                     }
                 }

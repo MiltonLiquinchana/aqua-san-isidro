@@ -1,18 +1,31 @@
 import { useRef } from "react";
 import { Link } from "react-router-dom";
 import { ReactSVG } from "react-svg";
-export default function Menu() {
+interface props {
+  containerMenuRef: React.RefObject<HTMLDivElement>;
+}
+export default function Menu({ containerMenuRef }: props) {
   const subMenu = useRef<HTMLDivElement>(null);
 
-  const expandiropciones = () => {
+  const expandOptions = () => {
     if (!subMenu.current) {
+      return;
+    }
+    if (containerMenuRef.current?.classList.contains("menu-small")) {
       return;
     }
     subMenu.current.classList.toggle("expanded");
   };
 
-  const expandmenu = () => {
-    console.log("hola perro");
+  const expandMenu = () => {
+    if (!containerMenuRef.current) {
+      return;
+    }
+    containerMenuRef.current.classList.toggle("menu-small");
+    if (!subMenu.current?.classList.contains("expanded")) {
+      return;
+    }
+    subMenu.current.classList.remove("expanded");
   };
 
   return (
@@ -24,7 +37,7 @@ export default function Menu() {
           <ReactSVG
             className="header-menu-expand"
             src="src/assets/menu/short.svg"
-            onClick={expandmenu}
+            onClick={expandMenu}
           />
         </div>
         <div className="divider"></div>
@@ -39,7 +52,7 @@ export default function Menu() {
             </Link>
           </div>
           <div className="option" ref={subMenu}>
-            <Link className="expanded-link" onClick={expandiropciones}>
+            <Link className="expanded-link" onClick={expandOptions}>
               <ReactSVG
                 className="expanded-link-icon"
                 src="src/assets/menu/registro.svg"

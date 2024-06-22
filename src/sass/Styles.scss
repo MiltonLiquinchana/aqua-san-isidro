@@ -1,5 +1,26 @@
 @import "_Menu";
 
+
+@keyframes shrinkAnimation {
+    from {
+        width: 300px;
+    }
+
+    to {
+        width: 150px;
+    }
+}
+
+@keyframes expandAnimation {
+    from {
+        width: 150px;
+    }
+
+    to {
+        width: 300px;
+    }
+}
+
 html,
 body {
     background: #FAF1FC;
@@ -12,15 +33,19 @@ body {
         width: 100%;
         height: 100%;
         display: flex;
-        .menu{
+
+        .menu {
             width: 300px;
             background-color: #202B46;
             padding: 24px;
+            animation: expandAnimation 0.2s ease-out;
         }
-        .menu-small{
-            width: 150px;
+
+        .menu-small {
+            animation: shrinkAnimation 0.5s ease-in-out forwards;
         }
-        .contenido{
+
+        .contenido {
             flex-grow: 8;
         }
     }
